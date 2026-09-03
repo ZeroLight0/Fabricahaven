@@ -1,6 +1,11 @@
+import type { Metadata } from "next";
 import { prisma } from "@/lib/prisma";
 import PaymentStatus from "./PaymentStatus";
 import OrderSummary from "./OrderSummary";
+
+export const metadata: Metadata = {
+  robots: { index: false, follow: false },
+};
 
 export default async function PaymentCallbackPage({
   searchParams,
