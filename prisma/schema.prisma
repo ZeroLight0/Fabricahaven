@@ -1,0 +1,112 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Occasion {
+  CASUAL
+  OFFICIAL
+  TRADITIONAL
+  WEDDING
+  PARTY
+}
+
+enum GarmentCategory {
+  DRESS
+  TOP
+  TROUSERS
+  SKIRT
+  AGBADA
+  KAFTAN
+  SUIT
+  GOWN
+  JUMPSUIT
+  SHORTS
+  SET
+}
+
+enum OrderStatus {
+  PENDING_PAYMENT
+  PAID
+  FAILED
+}
+
+model StyleTemplate {
+  id           String          @id @default(cuid())
+  name         String
+  imageUrl     String // placeholder until Cloudinary links are added
+  garment      GarmentCategory
+  occasions    Occasion[]
+  yardageNotes String?
+  active       Boolean         @default(true)
+  createdAt    DateTime        @default(now())
+
+  suggestedIn StyleSelection[]
+  chosenBy    Submission[]     @relation("ChosenStyle")
+}
+
+model Tailor {
+  id            String   @id @default(cuid())
+  name          String
+  email         String
+  photoUrl      String
+  specialtyTags String // free text, comma-separated
+  location      String
+  active        Boolean  @default(true)
+  createdAt     DateTime @default(now())
+
+  submissions Submission[]
+}
+
+model Submission {
+  id             String   @id @default(cuid())
+  name           String
+  email          String
+  phone          String
+  address        String
+  occasion       Occasion
+  fabricImageUrl String
+  fabricLabel    String?
+  pricePerYard   Float
+  measurements   Json // { bust, waist, hips, shoulder, length } cm
+
+  tailorId         String?
+  tailor           Tailor?        @relation(fields: [tailorId], references: [id])
+  chosenTemplateId String?
+  chosenTemplate   StyleTemplate? @relation("ChosenStyle", fields: [chosenTemplateId], references: [id])
+
+  yardsNeeded Float?
+  totalPrice  Float? // fabric cost only, no commission
+
+  createdAt DateTime @default(now())
+
+  selections StyleSelection[]
+  order      Order?
+}
+
+model StyleSelection {
+  id           String        @id @default(cuid())
+  submission   Submission    @relation(fields: [submissionId], references: [id])
+  submissionId String
+  template     StyleTemplate @relation(fields: [templateId], references: [id])
+  templateId   String
+  rank         Int
+  reason       String
+  yardsNeeded  Float
+  totalPrice   Float
+}
+
+model Order {
+  id                String      @id @default(cuid())
+  submission        Submission  @relation(fields: [submissionId], references: [id])
+  submissionId      String      @unique
+  paystackReference String      @unique
+  paystackTxId      String?
+  amount            Float
+  status            OrderStatus @default(PENDING_PAYMENT)
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+}
