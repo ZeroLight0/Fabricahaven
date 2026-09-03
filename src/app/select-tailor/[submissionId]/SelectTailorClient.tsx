@@ -50,12 +50,12 @@ export default function SelectTailorClient({ submissionId, styleId, tailors }: P
   return (
     <main className="flex-1 px-6 py-12">
       <div className="max-w-3xl mx-auto">
-        <h1 className="text-2xl font-semibold">Pick your tailor</h1>
-        <p className="text-sm text-stone-500 mt-2">
+        <h1 className="font-display text-2xl font-semibold">Pick your tailor</h1>
+        <p className="text-sm text-espresso-muted mt-2">
           Choose who will make your piece. This doesn&apos;t change your style suggestions.
         </p>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mt-6">
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mt-6" role="radiogroup" aria-label="Tailors">
           {tailors.map((t) => (
             <TailorCard
               key={t.id}
@@ -69,14 +69,18 @@ export default function SelectTailorClient({ submissionId, styleId, tailors }: P
           ))}
         </div>
 
-        {error && <p className="text-sm text-red-600 mt-4">{error}</p>}
+        {error && (
+          <p className="text-sm text-red-700 mt-4" role="alert">
+            {error}
+          </p>
+        )}
 
         <div className="mt-8 flex justify-end">
           <button
             type="button"
             disabled={!tailorId || submitting}
             onClick={proceed}
-            className="rounded-full px-6 py-2.5 text-sm font-medium bg-stone-900 text-white disabled:opacity-40"
+            className="satin-sheen overflow-hidden rounded-full px-6 py-2.5 text-sm font-medium bg-espresso text-cream hover:bg-espresso/90 transition-colors disabled:opacity-40"
           >
             {submitting ? "Saving…" : "Continue to review"}
           </button>

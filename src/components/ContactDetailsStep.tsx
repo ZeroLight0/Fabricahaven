@@ -14,46 +14,49 @@ interface Props {
   onChange: (value: ContactDetails) => void;
 }
 
+const inputClasses =
+  "mt-1 block w-full rounded-md border border-taupe/40 bg-white/60 px-3 py-2 text-sm focus:border-espresso focus:outline-none";
+
 export default function ContactDetailsStep({ value, onChange }: Props) {
   return (
     <div className="flex flex-col gap-4">
       <label className="block">
-        <span className="text-sm font-medium text-stone-700">Full name</span>
+        <span className="text-sm font-medium text-espresso">Full name</span>
         <input
           type="text"
-          className="mt-1 block w-full rounded-md border border-stone-300 px-3 py-2 text-sm"
+          className={inputClasses}
           value={value.name}
           onChange={(e) => onChange({ ...value, name: e.target.value })}
         />
       </label>
       <label className="block">
-        <span className="text-sm font-medium text-stone-700">Email</span>
+        <span className="text-sm font-medium text-espresso">Email</span>
         <input
           type="email"
-          className="mt-1 block w-full rounded-md border border-stone-300 px-3 py-2 text-sm"
+          className={inputClasses}
           value={value.email}
           onChange={(e) => onChange({ ...value, email: e.target.value })}
         />
       </label>
       <label className="block">
-        <span className="text-sm font-medium text-stone-700">Phone</span>
+        <span className="text-sm font-medium text-espresso">Phone</span>
         <input
           type="tel"
-          className="mt-1 block w-full rounded-md border border-stone-300 px-3 py-2 text-sm"
+          className={inputClasses}
           value={value.phone}
           onChange={(e) => onChange({ ...value, phone: e.target.value })}
         />
       </label>
       <label className="block">
-        <span className="text-sm font-medium text-stone-700">Delivery / pickup address</span>
+        <span className="text-sm font-medium text-espresso">Delivery / pickup address</span>
         <textarea
           rows={2}
-          className="mt-1 block w-full rounded-md border border-stone-300 px-3 py-2 text-sm"
+          className={inputClasses}
           value={value.address}
           onChange={(e) => onChange({ ...value, address: e.target.value })}
         />
       </label>
-      <p className="text-xs text-stone-500">{NDPA_NOTICE}</p>
+      <p className="text-xs text-espresso-muted">{NDPA_NOTICE}</p>
     </div>
   );
 }

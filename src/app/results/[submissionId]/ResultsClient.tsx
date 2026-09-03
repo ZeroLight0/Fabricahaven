@@ -35,13 +35,13 @@ export default function ResultsClient({ submissionId, selections }: Props) {
   return (
     <main className="flex-1 px-6 py-12">
       <div className="max-w-3xl mx-auto">
-        <h1 className="text-2xl font-semibold">Suggested styles for your fabric</h1>
-        <p className="text-sm text-stone-500 mt-2">{STYLE_DISCLAIMER}</p>
-        <p className="text-sm font-medium mt-4 bg-amber-50 border border-amber-200 rounded-md px-3 py-2 inline-block">
+        <h1 className="font-display text-2xl font-semibold">Suggested styles for your fabric</h1>
+        <p className="text-sm text-espresso-muted mt-2">{STYLE_DISCLAIMER}</p>
+        <p className="text-sm font-medium mt-4 bg-blush border border-dusty-rose/40 text-espresso rounded-md px-3 py-2 inline-block">
           {COMMISSION_NOTICE}
         </p>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mt-6">
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mt-6" role="radiogroup" aria-label="Suggested styles">
           {selections.map((s) => (
             <StyleSuggestionCard
               key={s.id}
@@ -61,7 +61,7 @@ export default function ResultsClient({ submissionId, selections }: Props) {
             type="button"
             disabled={!chosenTemplateId}
             onClick={proceed}
-            className="rounded-full px-6 py-2.5 text-sm font-medium bg-stone-900 text-white disabled:opacity-40"
+            className="satin-sheen overflow-hidden rounded-full px-6 py-2.5 text-sm font-medium bg-espresso text-cream hover:bg-espresso/90 transition-colors disabled:opacity-40"
           >
             Continue to pick a tailor
           </button>

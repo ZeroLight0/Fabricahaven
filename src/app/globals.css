@@ -1,26 +1,53 @@
 @import "tailwindcss";
 
+@theme {
+  --color-espresso: #4a2e2a;
+  /* Lighter than espresso for secondary/caption text — solid (not opacity)
+     so it stays >= 4.5:1 (WCAG AA, normal text) against cream AND blush. */
+  --color-espresso-muted: #5c3b35;
+  --color-dusty-rose: #c88d8b;
+  --color-blush: #ebcbc4;
+  --color-cream: #f7efe7;
+  --color-taupe: #a68e7e;
+
+  --font-display: var(--font-playfair);
+  --font-sans: var(--font-poppins);
+}
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  color-scheme: light;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-cream);
+  color: var(--color-espresso);
+}
+
+/* A soft, silk-like sheen for large surfaces (hero, primary buttons, active
+   cards) — a diagonal highlight, not a repeating pattern, so it stays subtle. */
+.satin-sheen {
+  position: relative;
+  isolation: isolate;
+}
+
+.satin-sheen::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    115deg,
+    color-mix(in srgb, white 0%, transparent) 0%,
+    color-mix(in srgb, white 30%, transparent) 32%,
+    color-mix(in srgb, white 0%, transparent) 48%,
+    color-mix(in srgb, white 12%, transparent) 70%,
+    color-mix(in srgb, white 0%, transparent) 100%
+  );
+}
+
+/* Visible, on-brand focus ring for keyboard navigation (WCAG 2.4.7). */
+:focus-visible {
+  outline: 2px solid var(--color-espresso);
+  outline-offset: 2px;
+  border-radius: 2px;
 }

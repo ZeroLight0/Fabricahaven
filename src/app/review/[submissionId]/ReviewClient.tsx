@@ -57,27 +57,27 @@ export default function ReviewClient({
 
   return (
     <main className="flex-1 px-6 py-12">
-      <div className="max-w-lg mx-auto">
-        <h1 className="text-2xl font-semibold">Review your order</h1>
+      <div className="max-w-lg mx-auto rounded-2xl bg-white/50 border border-taupe/20 shadow-sm shadow-espresso/5 p-6 sm:p-8">
+        <h1 className="font-display text-2xl font-semibold">Review your order</h1>
 
         <div className="mt-6 flex gap-4">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={fabricImageUrl}
             alt="Your fabric"
-            className="w-24 h-24 object-cover rounded-lg border border-stone-200"
+            className="w-24 h-24 object-cover rounded-lg border border-taupe/25"
           />
           {styleImageUrl && styleImageUrl !== "PENDING_UPLOAD" && (
             // eslint-disable-next-line @next/next/no-img-element
             <img
               src={styleImageUrl}
               alt={styleName}
-              className="w-24 h-24 object-cover rounded-lg border border-stone-200"
+              className="w-24 h-24 object-cover rounded-lg border border-taupe/25"
             />
           )}
         </div>
 
-        <dl className="mt-6 divide-y divide-stone-200 text-sm">
+        <dl className="mt-6 divide-y divide-taupe/20 text-sm">
           <Row label="Fabric" value={fabricLabel} />
           <Row label="Occasion" value={occasion} />
           <Row
@@ -90,18 +90,22 @@ export default function ReviewClient({
           <Row label="Fabric cost" value={`₦${totalPrice.toLocaleString()}`} />
         </dl>
 
-        <p className="text-sm font-medium mt-6 bg-amber-50 border border-amber-200 rounded-md px-3 py-2">
+        <p className="text-sm font-medium mt-6 bg-blush border border-dusty-rose/40 text-espresso rounded-md px-3 py-2">
           {COMMISSION_NOTICE}
         </p>
-        <p className="text-xs text-stone-500 mt-3">{NDPA_NOTICE}</p>
+        <p className="text-xs text-espresso-muted mt-3">{NDPA_NOTICE}</p>
 
-        {error && <p className="text-sm text-red-600 mt-4">{error}</p>}
+        {error && (
+          <p className="text-sm text-red-700 mt-4" role="alert">
+            {error}
+          </p>
+        )}
 
         <button
           type="button"
           disabled={submitting}
           onClick={payNow}
-          className="mt-8 w-full rounded-full px-6 py-3 text-sm font-medium bg-stone-900 text-white disabled:opacity-40"
+          className="satin-sheen overflow-hidden mt-8 w-full rounded-full px-6 py-3 text-sm font-medium bg-espresso text-cream hover:bg-espresso/90 transition-colors disabled:opacity-40"
         >
           {submitting ? "Starting payment…" : `Pay Now — ₦${totalPrice.toLocaleString()}`}
         </button>
@@ -113,8 +117,8 @@ export default function ReviewClient({
 function Row({ label, value }: { label: string; value: string }) {
   return (
     <div className="py-3 flex justify-between gap-4">
-      <dt className="text-stone-500">{label}</dt>
-      <dd className="text-right font-medium">{value}</dd>
+      <dt className="text-espresso-muted">{label}</dt>
+      <dd className="text-right font-medium text-espresso">{value}</dd>
     </div>
   );
 }

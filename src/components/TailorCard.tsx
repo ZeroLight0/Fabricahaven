@@ -18,25 +18,29 @@ export default function TailorCard({
   return (
     <button
       type="button"
+      role="radio"
+      aria-checked={selected}
       onClick={onSelect}
-      className={`text-left rounded-xl border overflow-hidden transition-colors ${
-        selected ? "border-stone-900 ring-2 ring-stone-900" : "border-stone-200 hover:border-stone-400"
+      className={`text-left rounded-xl border overflow-hidden bg-white/50 transition-colors ${
+        selected
+          ? "border-espresso ring-2 ring-espresso"
+          : "border-taupe/25 hover:border-dusty-rose"
       }`}
     >
-      <div className="aspect-square bg-stone-100">
+      <div className="aspect-square bg-blush/40">
         {photoUrl && photoUrl !== "PENDING_UPLOAD" ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img src={photoUrl} alt={name} className="w-full h-full object-cover" />
         ) : (
-          <div className="w-full h-full flex items-center justify-center text-stone-400 text-sm">
+          <div className="w-full h-full flex items-center justify-center text-espresso-muted text-sm px-2 text-center">
             {name}
           </div>
         )}
       </div>
       <div className="p-3">
-        <h3 className="font-medium">{name}</h3>
-        <p className="text-xs text-stone-500 mt-1">{specialtyTags}</p>
-        <p className="text-xs text-stone-400 mt-1">{location}</p>
+        <h3 className="font-medium text-espresso">{name}</h3>
+        <p className="text-xs text-espresso-muted mt-1">{specialtyTags}</p>
+        <p className="text-xs text-espresso-muted mt-1">{location}</p>
       </div>
     </button>
   );

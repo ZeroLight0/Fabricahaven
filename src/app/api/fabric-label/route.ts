@@ -45,7 +45,8 @@ export async function POST(req: NextRequest) {
   let fabricImageUrl: string;
   try {
     fabricImageUrl = await uploadFabricPhoto(buffer, file.name, file.type);
-  } catch {
+  } catch (err) {
+    console.error("Fabric photo upload failed:", err);
     return NextResponse.json({ error: "Failed to store fabric photo" }, { status: 500 });
   }
 
@@ -76,7 +77,8 @@ Respond with ONLY a JSON object in this exact shape, no other text:
         },
       ],
     });
-  } catch {
+  } catch (err) {
+    console.error("Claude fabric analysis request failed:", err);
     return NextResponse.json({ error: "Fabric analysis failed, please try again" }, { status: 502 });
   }
 
@@ -93,7 +95,8 @@ Respond with ONLY a JSON object in this exact shape, no other text:
   let suggestion;
   try {
     suggestion = fabricLabelSchema.parse(JSON.parse(jsonMatch[0]));
-  } catch {
+  } catch (err) {
+    console.error("Fabric analysis response parsing failed:", err, textBlock.text);
     return NextResponse.json({ error: "Fabric analysis failed, please try again" }, { status: 502 });
   }
 

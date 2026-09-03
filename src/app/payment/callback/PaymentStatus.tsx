@@ -22,9 +22,13 @@ export default function PaymentStatus({ submissionId }: { submissionId: string }
   }, [attempts, submissionId, router]);
 
   return (
-    <div className="text-center">
-      <h1 className="text-xl font-semibold">Confirming your payment…</h1>
-      <p className="text-stone-500 mt-2">This usually takes a few seconds.</p>
+    <div className="text-center" role="status" aria-live="polite">
+      <div
+        aria-hidden="true"
+        className="mx-auto mb-4 h-8 w-8 rounded-full border-2 border-dusty-rose border-t-espresso animate-spin"
+      />
+      <h1 className="font-display text-xl font-semibold">Confirming your payment…</h1>
+      <p className="text-espresso-muted mt-2">This usually takes a few seconds.</p>
     </div>
   );
 }

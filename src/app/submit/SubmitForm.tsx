@@ -109,15 +109,22 @@ export default function SubmitForm() {
 
   return (
     <main className="flex-1 flex flex-col items-center px-6 py-12">
-      <div className="w-full max-w-lg">
+      <div className="w-full max-w-lg rounded-2xl bg-white/50 border border-taupe/20 shadow-sm shadow-espresso/5 p-6 sm:p-8">
         <div className="mb-8">
-          <p className="text-xs font-medium text-stone-400 uppercase tracking-wide">
+          <p className="text-xs font-medium text-dusty-rose uppercase tracking-[0.15em]">
             Step {step + 1} of {STEP_TITLES.length}
           </p>
-          <h1 className="text-2xl font-semibold mt-1">{STEP_TITLES[step]}</h1>
-          <div className="mt-3 h-1 bg-stone-200 rounded-full overflow-hidden">
+          <h1 className="font-display text-2xl font-semibold mt-1">{STEP_TITLES[step]}</h1>
+          <div
+            className="mt-3 h-1.5 bg-blush/60 rounded-full overflow-hidden"
+            role="progressbar"
+            aria-valuenow={step + 1}
+            aria-valuemin={1}
+            aria-valuemax={STEP_TITLES.length}
+            aria-label={`Step ${step + 1} of ${STEP_TITLES.length}: ${STEP_TITLES[step]}`}
+          >
             <div
-              className="h-full bg-stone-900 transition-all"
+              className="h-full bg-dusty-rose transition-all"
               style={{ width: `${((step + 1) / STEP_TITLES.length) * 100}%` }}
             />
           </div>
@@ -143,14 +150,18 @@ export default function SubmitForm() {
           {step === 4 && <ContactDetailsStep value={contact} onChange={setContact} />}
         </div>
 
-        {error && <p className="text-sm text-red-600 mb-4">{error}</p>}
+        {error && (
+          <p className="text-sm text-red-700 mb-4" role="alert">
+            {error}
+          </p>
+        )}
 
         <div className="flex justify-between">
           <button
             type="button"
             disabled={step === 0 || submitting}
             onClick={() => setStep((s) => s - 1)}
-            className="rounded-full px-6 py-2.5 text-sm font-medium border border-stone-300 disabled:opacity-40"
+            className="rounded-full px-6 py-2.5 text-sm font-medium border border-taupe/50 text-espresso hover:bg-blush/30 transition-colors disabled:opacity-40"
           >
             Back
           </button>
@@ -160,7 +171,7 @@ export default function SubmitForm() {
               type="button"
               disabled={!canProceed}
               onClick={() => setStep((s) => s + 1)}
-              className="rounded-full px-6 py-2.5 text-sm font-medium bg-stone-900 text-white disabled:opacity-40"
+              className="rounded-full px-6 py-2.5 text-sm font-medium bg-espresso text-cream hover:bg-espresso/90 transition-colors disabled:opacity-40"
             >
               Next
             </button>
@@ -169,7 +180,7 @@ export default function SubmitForm() {
               type="button"
               disabled={!canProceed || submitting}
               onClick={handleSubmit}
-              className="rounded-full px-6 py-2.5 text-sm font-medium bg-stone-900 text-white disabled:opacity-40"
+              className="satin-sheen overflow-hidden rounded-full px-6 py-2.5 text-sm font-medium bg-espresso text-cream hover:bg-espresso/90 transition-colors disabled:opacity-40"
             >
               {submitting ? "Getting suggestions…" : "Submit"}
             </button>

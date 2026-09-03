@@ -53,11 +53,11 @@ export default function FabricUploadStep({
   return (
     <div className="flex flex-col gap-4">
       <label className="block">
-        <span className="text-sm font-medium text-stone-700">Fabric photo</span>
+        <span className="text-sm font-medium text-espresso">Fabric photo</span>
         <input
           type="file"
           accept="image/jpeg,image/png,image/webp"
-          className="mt-2 block w-full text-sm"
+          className="mt-2 block w-full text-sm text-espresso-muted file:mr-3 file:rounded-full file:border-0 file:bg-espresso file:px-4 file:py-2 file:text-sm file:font-medium file:text-cream hover:file:bg-espresso/90 file:cursor-pointer"
           onChange={(e) => {
             const file = e.target.files?.[0];
             if (file) handleFile(file);
@@ -70,25 +70,25 @@ export default function FabricUploadStep({
         <img
           src={previewUrl}
           alt="Fabric preview"
-          className="w-full max-h-64 object-cover rounded-lg border border-stone-200"
+          className="w-full max-h-64 object-cover rounded-lg border border-taupe/25"
         />
       )}
 
-      {loading && <p className="text-sm text-stone-500">Analyzing your fabric…</p>}
-      {error && <p className="text-sm text-red-600">{error}</p>}
+      {loading && <p className="text-sm text-espresso-muted">Analyzing your fabric…</p>}
+      {error && <p className="text-sm text-red-700" role="alert">{error}</p>}
 
       {fabricImageUrl && (
         <div>
           <label className="block">
-            <span className="text-sm font-medium text-stone-700">
+            <span className="text-sm font-medium text-espresso">
               Fabric description {confidence !== null && (
-                <span className="text-stone-400 font-normal">
+                <span className="text-espresso-muted font-normal">
                   ({Math.round(confidence * 100)}% confidence — please confirm or edit)
                 </span>
               )}
             </span>
             <textarea
-              className="mt-2 block w-full rounded-md border border-stone-300 px-3 py-2 text-sm"
+              className="mt-2 block w-full rounded-md border border-taupe/40 bg-white/60 px-3 py-2 text-sm focus:border-espresso focus:outline-none"
               rows={2}
               value={fabricLabel}
               onChange={(e) => onLabelChange(e.target.value)}

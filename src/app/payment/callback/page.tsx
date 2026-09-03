@@ -17,7 +17,7 @@ export default async function PaymentCallbackPage({
   if (!submissionId) {
     return (
       <main className="flex-1 flex items-center justify-center px-6">
-        <p className="text-stone-600">Missing order reference.</p>
+        <p className="text-espresso-muted">Missing order reference.</p>
       </main>
     );
   }
@@ -30,7 +30,7 @@ export default async function PaymentCallbackPage({
   if (!submission || !submission.order) {
     return (
       <main className="flex-1 flex items-center justify-center px-6">
-        <p className="text-stone-600">We couldn&apos;t find that order.</p>
+        <p className="text-espresso-muted">We couldn&apos;t find that order.</p>
       </main>
     );
   }
@@ -47,8 +47,10 @@ export default async function PaymentCallbackPage({
     return (
       <main className="flex-1 flex items-center justify-center px-6 text-center">
         <div>
-          <h1 className="text-xl font-semibold text-red-600">Payment could not be verified</h1>
-          <p className="text-stone-500 mt-2">
+          <h1 className="font-display text-xl font-semibold text-red-700">
+            Payment could not be verified
+          </h1>
+          <p className="text-espresso-muted mt-2">
             If you were charged, please contact support with your reference.
           </p>
         </div>
