@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { GarmentCategory, Occasion } from "@prisma/client";
-import { anthropic, CLAUDE_MODEL } from "./anthropic";
+import { generateGeminiContent } from "./gemini";
 
 export interface TemplateForPrompt {
   id: string;
@@ -9,14 +9,36 @@ export interface TemplateForPrompt {
   occasions: Occasion[];
 }
 
-const suggestionSchema = z
-  .array(
-    z.object({
-      templateId: z.string(),
-      reason: z.string(),
-    })
-  )
-  .length(5);
+const styleSuggestionResponseSchema = {
+  type: "OBJECT",
+  properties: {
+    suggestions: {
+      type: "ARRAY",
+      minItems: 5,
+      maxItems: 5,
+      items: {
+        type: "OBJECT",
+        properties: {
+          templateId: { type: "STRING" },
+          reason: { type: "STRING" },
+        },
+        required: ["templateId", "reason"],
+      },
+    },
+  },
+  required: ["suggestions"],
+};
+
+const suggestionSchema = z.object({
+  suggestions: z
+    .array(
+      z.object({
+        templateId: z.string(),
+        reason: z.string(),
+      })
+    )
+    .length(5),
+});
 
 export interface StyleSuggestionPick {
   templateId: string;
@@ -56,26 +78,21 @@ Respond with ONLY a JSON array of exactly 5 objects, ranked best first, in this 
 
 Each "reason" must be under 15 words and reference the fabric or occasion fit. Use only template ids from the list above.`;
 
-  const response = await anthropic.messages.create({
-    model: CLAUDE_MODEL,
-    max_tokens: 1024,
-    messages: [{ role: "user", content: prompt }],
-  });
+  const responseText = await generateGeminiContent(
+    [{ text: prompt }],
+    styleSuggestionResponseSchema,
+    1024
+  );
 
-  const textBlock = response.content.find((block) => block.type === "text");
-  if (!textBlock || textBlock.type !== "text") {
-    throw new Error("Style suggestion response contained no text");
-  }
-
-  const jsonMatch = textBlock.text.match(/\[[\s\S]*\]/);
+  const jsonMatch = responseText.match(/\{[\s\S]*\}/);
   if (!jsonMatch) {
-    throw new Error("Style suggestion response did not contain a JSON array");
+    throw new Error("Style suggestion response did not contain a JSON object");
   }
 
   const parsed = suggestionSchema.parse(JSON.parse(jsonMatch[0]));
 
   const validIds = new Set(templates.map((t) => t.id));
-  const filtered = parsed.filter((pick) => validIds.has(pick.templateId));
+  const filtered = parsed.suggestions.filter((pick) => validIds.has(pick.templateId));
 
   if (filtered.length < 5) {
     throw new Error("Style suggestion returned templateIds outside the provided list");

@@ -1,16 +1,27 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { anthropic, CLAUDE_MODEL } from "@/lib/anthropic";
+import { generateGeminiContent } from "@/lib/gemini";
 import { uploadFabricPhoto } from "@/lib/supabase";
 
 const MAX_FILE_BYTES = 10 * 1024 * 1024; // 10MB
 const ALLOWED_TYPES = new Set(["image/jpeg", "image/png", "image/webp"]);
 
+const fabricLabelResponseSchema = {
+  type: "OBJECT",
+  properties: {
+    likelyType: { type: "STRING" },
+    colorway: { type: "STRING" },
+    patternDescription: { type: "STRING" },
+    confidence: { type: "STRING" },
+  },
+  required: ["likelyType", "colorway", "patternDescription", "confidence"],
+};
+
 const fabricLabelSchema = z.object({
   likelyType: z.string(),
   colorway: z.string(),
   patternDescription: z.string(),
-  confidence: z.number().min(0).max(1),
+  confidence: z.coerce.number().min(0).max(1),
 });
 
 export async function POST(req: NextRequest) {
@@ -59,35 +70,24 @@ Respond with ONLY a JSON object in this exact shape, no other text:
 
 "confidence" is a number between 0 and 1.`;
 
-  let response;
+  let responseText: string;
   try {
-    response = await anthropic.messages.create({
-      model: CLAUDE_MODEL,
-      max_tokens: 512,
-      messages: [
+    responseText = await generateGeminiContent(
+      [
         {
-          role: "user",
-          content: [
-            {
-              type: "image",
-              source: { type: "base64", media_type: file.type as "image/jpeg" | "image/png" | "image/webp", data: base64 },
-            },
-            { type: "text", text: prompt },
-          ],
+          inline_data: { mime_type: file.type, data: base64 },
         },
+        { text: prompt },
       ],
-    });
+      fabricLabelResponseSchema,
+      512
+    );
   } catch (err) {
-    console.error("Claude fabric analysis request failed:", err);
+    console.error("Gemini fabric analysis request failed:", err);
     return NextResponse.json({ error: "Fabric analysis failed, please try again" }, { status: 502 });
   }
 
-  const textBlock = response.content.find((block) => block.type === "text");
-  if (!textBlock || textBlock.type !== "text") {
-    return NextResponse.json({ error: "Fabric analysis failed, please try again" }, { status: 502 });
-  }
-
-  const jsonMatch = textBlock.text.match(/\{[\s\S]*\}/);
+  const jsonMatch = responseText.match(/\{[\s\S]*\}/);
   if (!jsonMatch) {
     return NextResponse.json({ error: "Fabric analysis failed, please try again" }, { status: 502 });
   }
@@ -96,7 +96,7 @@ Respond with ONLY a JSON object in this exact shape, no other text:
   try {
     suggestion = fabricLabelSchema.parse(JSON.parse(jsonMatch[0]));
   } catch (err) {
-    console.error("Fabric analysis response parsing failed:", err, textBlock.text);
+    console.error("Fabric analysis response parsing failed:", err, responseText);
     return NextResponse.json({ error: "Fabric analysis failed, please try again" }, { status: 502 });
   }
 

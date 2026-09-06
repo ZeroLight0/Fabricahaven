@@ -7,7 +7,7 @@ Paystack. See `PRD.md` for the full spec.
 ## Stack
 
 Next.js (App Router, TypeScript) · Tailwind CSS · Prisma + PostgreSQL ·
-Supabase Storage · Anthropic API (Claude) · Paystack · Resend · pnpm
+Supabase Storage · Google Gemini API · Paystack · Resend · pnpm
 
 ## Setup
 
@@ -29,7 +29,7 @@ pnpm dev
 | Variable | Purpose |
 |---|---|
 | `DATABASE_URL` | PostgreSQL connection string (Aiven) |
-| `ANTHROPIC_API_KEY` | Claude API key for fabric labeling + style suggestion |
+| `GEMINI_API_KEY` | Google Gemini API key for fabric labeling + style suggestion |
 | `PAYSTACK_SECRET_KEY` | Paystack secret key (test or live) |
 | `RESEND_API_KEY` | Resend API key for tailor notification emails |
 | `NOTIFICATIONS_FROM_EMAIL` | From-address for tailor emails |
@@ -60,3 +60,9 @@ Per the PRD's non-goals: no customer/tailor accounts, no admin
 dashboard, no order-status tracking beyond the payment confirmation
 screen, and no Cloudinary image-upload script (`scripts/upload-style-images.ts`) —
 that's a separate pass once real style photos are supplied.
+
+## Notes
+
+- Fabric labeling (vision) and style suggestion (reasoning) both run on
+  Google's Gemini API (`gemini-2.5-flash`) via `src/lib/gemini.ts`,
+  replacing the prior Claude/Anthropic integration.
