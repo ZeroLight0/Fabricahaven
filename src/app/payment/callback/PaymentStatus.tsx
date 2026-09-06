@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import AnimatedLoadingText from "@/components/AnimatedLoadingText";
 
 export default function PaymentStatus({ submissionId }: { submissionId: string }) {
   const router = useRouter();
@@ -28,7 +29,10 @@ export default function PaymentStatus({ submissionId }: { submissionId: string }
         className="mx-auto mb-4 h-8 w-8 rounded-full border-2 border-dusty-rose border-t-espresso animate-spin"
       />
       <h1 className="font-display text-xl font-semibold">Confirming your payment…</h1>
-      <p className="text-espresso-muted mt-2">This usually takes a few seconds.</p>
+      <AnimatedLoadingText
+        initialText="This usually takes a few seconds."
+        className="text-espresso-muted mt-2"
+      />
     </div>
   );
 }

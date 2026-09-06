@@ -7,6 +7,7 @@ import OccasionStep from "@/components/OccasionStep";
 import MeasurementsStep from "@/components/MeasurementsStep";
 import PriceStep from "@/components/PriceStep";
 import ContactDetailsStep, { type ContactDetails } from "@/components/ContactDetailsStep";
+import AnimatedLoadingText from "@/components/AnimatedLoadingText";
 import type { FabricSuggestion, MeasurementsInput, OccasionValue } from "@/lib/types";
 
 const STEP_TITLES = [
@@ -154,6 +155,13 @@ export default function SubmitForm() {
           <p className="text-sm text-red-700 mb-4" role="alert">
             {error}
           </p>
+        )}
+
+        {submitting && (
+          <AnimatedLoadingText
+            initialText="Getting your style suggestions…"
+            className="text-sm text-espresso-muted mb-4"
+          />
         )}
 
         <div className="flex justify-between">

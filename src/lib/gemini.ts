@@ -5,12 +5,19 @@ export interface GeminiPart {
   inline_data?: { mime_type: string; data: string };
 }
 
-export async function generateGeminiContent(
+const RETRYABLE_STATUSES = new Set([429, 503]);
+const RETRY_DELAY_MS = 1000;
+
+function sleep(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+async function callGemini(
   parts: GeminiPart[],
   responseSchema: object,
   maxOutputTokens: number
-): Promise<string> {
-  const res = await fetch(
+): Promise<Response> {
+  return fetch(
     `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${process.env.GEMINI_API_KEY}`,
     {
       method: "POST",
@@ -25,6 +32,20 @@ export async function generateGeminiContent(
       }),
     }
   );
+}
+
+export async function generateGeminiContent(
+  parts: GeminiPart[],
+  responseSchema: object,
+  maxOutputTokens: number
+): Promise<string> {
+  let res = await callGemini(parts, responseSchema, maxOutputTokens);
+
+  if (!res.ok && RETRYABLE_STATUSES.has(res.status)) {
+    console.warn(`Gemini API returned ${res.status}, retrying once after ${RETRY_DELAY_MS}ms...`);
+    await sleep(RETRY_DELAY_MS);
+    res = await callGemini(parts, responseSchema, maxOutputTokens);
+  }
 
   if (!res.ok) {
     const errorBody = await res.text();

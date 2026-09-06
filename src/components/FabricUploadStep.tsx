@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import type { FabricSuggestion } from "@/lib/types";
+import AnimatedLoadingText from "./AnimatedLoadingText";
 
 interface Props {
   fabricImageUrl: string | null;
@@ -74,7 +75,7 @@ export default function FabricUploadStep({
         />
       )}
 
-      {loading && <p className="text-sm text-espresso-muted">Analyzing your fabric…</p>}
+      {loading && <AnimatedLoadingText initialText="Analyzing your fabric…" />}
       {error && <p className="text-sm text-red-700" role="alert">{error}</p>}
 
       {fabricImageUrl && (
