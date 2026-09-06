@@ -38,7 +38,7 @@ export default async function PaymentCallbackPage({
   if (submission.order.status === "PENDING_PAYMENT") {
     return (
       <main className="flex-1 flex items-center justify-center px-6">
-        <PaymentStatus submissionId={submissionId} />
+        <PaymentStatus submissionId={submissionId} reference={submission.order.paystackReference} />
       </main>
     );
   }
