@@ -7,6 +7,12 @@ import { calculateYardage } from "@/lib/yardage";
 import { calculatePrice } from "@/lib/pricing";
 import { Occasion, Prisma } from "@prisma/client";
 
+// gemini-3.6-flash spends a mandatory, non-disableable token budget on
+// internal reasoning before answering (measured up to ~40s on a real
+// request with 21 templates) — give the function room to not be killed
+// by a platform timeout.
+export const maxDuration = 60;
+
 export async function POST(req: NextRequest) {
   const parsed = createSubmissionSchema.safeParse(await req.json());
   if (!parsed.success) {
@@ -26,7 +32,8 @@ export async function POST(req: NextRequest) {
   let picks;
   try {
     picks = await suggestStyles(input.fabricLabel, input.occasion as Occasion, templates);
-  } catch {
+  } catch (err) {
+    console.error("Style suggestion failed:", err);
     return NextResponse.json(
       { error: "Style suggestion failed, please try again" },
       { status: 502 }

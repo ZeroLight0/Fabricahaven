@@ -3,6 +3,11 @@ import { z } from "zod";
 import { generateGeminiContent } from "@/lib/gemini";
 import { uploadFabricPhoto } from "@/lib/supabase";
 
+// gemini-3.6-flash spends a mandatory, non-disableable token budget on
+// internal reasoning before answering (measured up to ~40s on a real
+// request) — give the function room to not be killed by a platform timeout.
+export const maxDuration = 60;
+
 const MAX_FILE_BYTES = 10 * 1024 * 1024; // 10MB
 const ALLOWED_TYPES = new Set(["image/jpeg", "image/png", "image/webp"]);
 
