@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { generateGeminiContent } from "@/lib/gemini";
+import { generateGeminiContent, GeminiQuotaExhaustedError } from "@/lib/gemini";
 import { uploadFabricPhoto } from "@/lib/supabase";
 
 // gemini-3.6-flash spends a mandatory, non-disableable token budget on
@@ -89,6 +89,12 @@ Respond with ONLY a JSON object in this exact shape, no other text:
     );
   } catch (err) {
     console.error("Gemini fabric analysis request failed:", err);
+    if (err instanceof GeminiQuotaExhaustedError) {
+      return NextResponse.json(
+        { error: "Our AI service has hit its daily limit — please try again tomorrow, or contact support." },
+        { status: 503 }
+      );
+    }
     return NextResponse.json({ error: "Fabric analysis failed, please try again" }, { status: 502 });
   }
 

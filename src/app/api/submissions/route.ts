@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { createSubmissionSchema } from "@/lib/schemas";
 import { zodErrorResponse } from "@/lib/apiResponse";
 import { suggestStyles } from "@/lib/styleSuggestion";
+import { GeminiQuotaExhaustedError } from "@/lib/gemini";
 import { calculateYardage } from "@/lib/yardage";
 import { calculatePrice } from "@/lib/pricing";
 import { Occasion, Prisma } from "@prisma/client";
@@ -34,6 +35,12 @@ export async function POST(req: NextRequest) {
     picks = await suggestStyles(input.fabricLabel, input.occasion as Occasion, templates);
   } catch (err) {
     console.error("Style suggestion failed:", err);
+    if (err instanceof GeminiQuotaExhaustedError) {
+      return NextResponse.json(
+        { error: "Our AI service has hit its daily limit — please try again tomorrow, or contact support." },
+        { status: 503 }
+      );
+    }
     return NextResponse.json(
       { error: "Style suggestion failed, please try again" },
       { status: 502 }
