@@ -16,6 +16,8 @@ export default function PaymentStatus({
 }) {
   const router = useRouter();
   const [attempts, setAttempts] = useState(0);
+  const [checking, setChecking] = useState(false);
+  const [checkError, setCheckError] = useState<string | null>(null);
 
   const timedOut = attempts >= MAX_ATTEMPTS;
 
@@ -38,6 +40,34 @@ export default function PaymentStatus({
     return () => clearTimeout(timer);
   }, [attempts, timedOut, submissionId, router]);
 
+  async function handleCheckAgain() {
+    setChecking(true);
+    setCheckError(null);
+    try {
+      // Actively ask Paystack for the real status instead of just
+      // re-reading our own record — this can unstick things even if the
+      // webhook never reaches us.
+      const res = await fetch("/api/payments/verify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ submissionId }),
+      });
+      const data = await res.json();
+      if (res.ok && data.status && data.status !== "PENDING_PAYMENT") {
+        router.refresh();
+        return;
+      }
+      if (!res.ok) {
+        setCheckError(data.error ?? "Could not check payment status. Please try again.");
+      }
+    } catch {
+      setCheckError("Could not check payment status. Please try again.");
+    } finally {
+      setChecking(false);
+      setAttempts(0); // resume passive polling as a fallback either way
+    }
+  }
+
   if (timedOut) {
     return (
       <div className="text-center" role="status" aria-live="polite">
@@ -48,12 +78,18 @@ export default function PaymentStatus({
           your reference below if this persists.
         </p>
         <p className="text-xs text-espresso-muted mt-3">Reference: {reference}</p>
+        {checkError && (
+          <p className="text-sm text-red-700 mt-3" role="alert">
+            {checkError}
+          </p>
+        )}
         <button
           type="button"
-          onClick={() => setAttempts(0)}
-          className="mt-6 rounded-full px-6 py-2.5 text-sm font-medium bg-espresso text-cream hover:bg-espresso/90 transition-colors"
+          onClick={handleCheckAgain}
+          disabled={checking}
+          className="mt-6 rounded-full px-6 py-2.5 text-sm font-medium bg-espresso text-cream hover:bg-espresso/90 transition-colors disabled:opacity-60"
         >
-          Check again
+          {checking ? "Checking…" : "Check again"}
         </button>
       </div>
     );
