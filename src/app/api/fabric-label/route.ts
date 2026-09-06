@@ -80,7 +80,7 @@ Respond with ONLY a JSON object in this exact shape, no other text:
         { text: prompt },
       ],
       fabricLabelResponseSchema,
-      512
+      4096
     );
   } catch (err) {
     console.error("Gemini fabric analysis request failed:", err);

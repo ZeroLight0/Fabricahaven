@@ -81,7 +81,7 @@ Each "reason" must be under 15 words and reference the fabric or occasion fit. U
   const responseText = await generateGeminiContent(
     [{ text: prompt }],
     styleSuggestionResponseSchema,
-    1024
+    4096
   );
 
   const jsonMatch = responseText.match(/\{[\s\S]*\}/);

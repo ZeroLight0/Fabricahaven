@@ -1,4 +1,4 @@
-export const GEMINI_MODEL = "gemini-2.5-flash";
+export const GEMINI_MODEL = "gemini-3.6-flash";
 
 export interface GeminiPart {
   text?: string;
@@ -34,7 +34,11 @@ export async function generateGeminiContent(
   const data = await res.json();
   const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
   if (typeof text !== "string") {
-    throw new Error("Gemini response did not contain text content");
+    const finishReason = data?.candidates?.[0]?.finishReason;
+    throw new Error(
+      `Gemini response did not contain text content (finishReason: ${finishReason}). ` +
+        `If this is MAX_TOKENS, maxOutputTokens (${maxOutputTokens}) was likely exhausted by internal reasoning before an answer was produced.`
+    );
   }
   return text;
 }
