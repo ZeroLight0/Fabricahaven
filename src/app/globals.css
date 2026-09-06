@@ -45,6 +45,32 @@ body {
   );
 }
 
+/* Print/PDF engines (notably iOS Safari's) render color-mix() gradients on
+   absolutely-positioned pseudo-elements unreliably — seen covering real
+   content with an opaque layer, and inflating a one-page document into
+   dozens of blank pages. The sheen is a decorative on-screen flourish, so
+   just drop it entirely for print rather than risk printable content. */
+@media print {
+  .satin-sheen::before {
+    content: none;
+  }
+
+  /* html/body/main form a full-viewport flex column (h-full, min-h-full,
+     flex-1) for on-screen layout — during print, that height chain can
+     resolve against an enormous computed page canvas instead of the
+     actual content height, ballooning a one-page document into dozens of
+     blank pages. Let print lay out by natural content height instead. */
+  html,
+  body {
+    height: auto;
+    min-height: 0;
+  }
+
+  main {
+    flex: none;
+  }
+}
+
 /* Visible, on-brand focus ring for keyboard navigation (WCAG 2.4.7). */
 :focus-visible {
   outline: 2px solid var(--color-espresso);

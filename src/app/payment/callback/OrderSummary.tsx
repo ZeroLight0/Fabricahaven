@@ -44,7 +44,7 @@ export default function OrderSummary({
       </div>
 
       <div
-        className="satin-sheen overflow-hidden rounded-xl border border-taupe/20 bg-white/60 p-6"
+        className="rounded-xl border border-taupe/20 bg-white p-6 print:border-0 print:p-0"
         id="order-summary"
       >
         <h2 className="font-display text-lg font-semibold">Order Summary</h2>
