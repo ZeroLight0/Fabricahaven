@@ -56,7 +56,7 @@ export async function POST(req: NextRequest) {
 
   const selectionsData = picks.map((pick, index) => {
     const template = templateById.get(pick.templateId)!;
-    const yardsNeeded = calculateYardage(template.garment, input.measurements);
+    const yardsNeeded = calculateYardage(template.garment, input.measurements, input.gender as Gender);
     const totalPrice = calculatePrice(yardsNeeded, input.pricePerYard);
     return {
       templateId: template.id,

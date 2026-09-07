@@ -16,20 +16,32 @@ export const measurementsSchema = z.object({
   hips: z.number().positive(),
   shoulder: z.number().positive(),
   length: z.number().positive(),
+  neck: z.number().positive().optional(),
+  sleeveLength: z.number().positive().optional(),
 });
 
-export const createSubmissionSchema = z.object({
-  name: z.string().min(1),
-  email: z.string().email(),
-  phone: z.string().min(5),
-  address: z.string().min(1),
-  gender: genderEnum,
-  occasion: occasionEnum,
-  fabricImageUrl: z.string().min(1),
-  fabricLabel: z.string().min(1),
-  pricePerYard: z.number().positive(),
-  measurements: measurementsSchema,
-});
+export const createSubmissionSchema = z
+  .object({
+    name: z.string().min(1),
+    email: z.string().email(),
+    phone: z.string().min(5),
+    address: z.string().min(1),
+    gender: genderEnum,
+    occasion: occasionEnum,
+    fabricImageUrl: z.string().min(1),
+    fabricLabel: z.string().min(1),
+    pricePerYard: z.number().positive(),
+    measurements: measurementsSchema,
+  })
+  .refine(
+    (data) =>
+      data.gender !== "MALE" ||
+      (data.measurements.neck !== undefined && data.measurements.sleeveLength !== undefined),
+    {
+      message: "neck and sleeveLength are required for male submissions",
+      path: ["measurements"],
+    }
+  );
 
 export const finalizeSubmissionSchema = z.object({
   submissionId: z.string().min(1),

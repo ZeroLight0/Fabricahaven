@@ -1,4 +1,4 @@
-import { GarmentCategory } from "@prisma/client";
+import { GarmentCategory, Gender } from "@prisma/client";
 
 export interface Measurements {
   bust: number;
@@ -6,10 +6,16 @@ export interface Measurements {
   hips: number;
   shoulder: number;
   length: number;
+  neck?: number;
+  sleeveLength?: number;
 }
 
-// Reference body (cm) that BASE_YARDAGE below is calibrated against.
-const REFERENCE = { bust: 90, waist: 70, hips: 95, length: 100 };
+// Reference bodies (cm) that BASE_YARDAGE below is calibrated against.
+// `bust` doubles as chest circumference for male measurements.
+const REFERENCE: Record<Gender, { bust: number; waist: number; hips: number; length: number }> = {
+  FEMALE: { bust: 90, waist: 70, hips: 95, length: 100 },
+  MALE: { bust: 100, waist: 85, hips: 100, length: 105 },
+};
 
 // Base yardage (yards) for the reference body, per garment category.
 const BASE_YARDAGE: Record<GarmentCategory, number> = {
@@ -34,17 +40,17 @@ function clamp(value: number, min: number, max: number): number {
 
 export function calculateYardage(
   garment: GarmentCategory,
-  measurements: Measurements
+  measurements: Measurements,
+  gender: Gender = Gender.FEMALE
 ): number {
+  const ref = REFERENCE[gender];
   const sizeFactor = clamp(
-    (measurements.bust / REFERENCE.bust +
-      measurements.waist / REFERENCE.waist +
-      measurements.hips / REFERENCE.hips) /
+    (measurements.bust / ref.bust + measurements.waist / ref.waist + measurements.hips / ref.hips) /
       3,
     0.75,
     1.6
   );
-  const lengthFactor = clamp(measurements.length / REFERENCE.length, 0.6, 1.8);
+  const lengthFactor = clamp(measurements.length / ref.length, 0.6, 1.8);
 
   const raw = BASE_YARDAGE[garment] * (0.6 * sizeFactor + 0.4 * lengthFactor);
   const roundedToQuarter = Math.round(raw * 4) / 4;

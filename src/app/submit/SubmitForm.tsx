@@ -41,6 +41,8 @@ export default function SubmitForm() {
     hips: "",
     shoulder: "",
     length: "",
+    neck: "",
+    sleeveLength: "",
   });
 
   const [pricePerYard, setPricePerYard] = useState("");
@@ -60,8 +62,13 @@ export default function SubmitForm() {
         return Boolean(gender);
       case 2:
         return Boolean(occasion);
-      case 3:
-        return Object.values(measurements).every((v) => v.trim() !== "" && Number(v) > 0);
+      case 3: {
+        const requiredKeys: (keyof MeasurementsInput)[] =
+          gender === "MALE"
+            ? ["bust", "waist", "hips", "shoulder", "length", "neck", "sleeveLength"]
+            : ["bust", "waist", "hips", "shoulder", "length"];
+        return requiredKeys.every((k) => measurements[k].trim() !== "" && Number(measurements[k]) > 0);
+      }
       case 4:
         return Number(pricePerYard) > 0;
       case 5:
@@ -99,6 +106,12 @@ export default function SubmitForm() {
             hips: Number(measurements.hips),
             shoulder: Number(measurements.shoulder),
             length: Number(measurements.length),
+            ...(gender === "MALE"
+              ? {
+                  neck: Number(measurements.neck),
+                  sleeveLength: Number(measurements.sleeveLength),
+                }
+              : {}),
           },
         }),
       });
@@ -154,7 +167,9 @@ export default function SubmitForm() {
           )}
           {step === 1 && <GenderStep value={gender} onChange={setGender} />}
           {step === 2 && <OccasionStep value={occasion} onChange={setOccasion} />}
-          {step === 3 && <MeasurementsStep value={measurements} onChange={setMeasurements} />}
+          {step === 3 && (
+            <MeasurementsStep value={measurements} onChange={setMeasurements} gender={gender} />
+          )}
           {step === 4 && <PriceStep value={pricePerYard} onChange={setPricePerYard} />}
           {step === 5 && <ContactDetailsStep value={contact} onChange={setContact} />}
         </div>

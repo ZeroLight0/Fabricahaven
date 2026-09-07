@@ -21,6 +21,8 @@ export interface MeasurementsInput {
   hips: string;
   shoulder: string;
   length: string;
+  neck: string;
+  sleeveLength: string;
 }
 
 export interface FabricSuggestion {
