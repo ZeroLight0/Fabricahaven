@@ -8,6 +8,13 @@ export const OCCASIONS: { value: OccasionValue; label: string }[] = [
   { value: "PARTY", label: "Party" },
 ];
 
+export type GenderValue = "MALE" | "FEMALE";
+
+export const GENDERS: { value: GenderValue; label: string }[] = [
+  { value: "MALE", label: "Male" },
+  { value: "FEMALE", label: "Female" },
+];
+
 export interface MeasurementsInput {
   bust: string;
   waist: string;

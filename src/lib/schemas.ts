@@ -8,6 +8,8 @@ export const occasionEnum = z.enum([
   "PARTY",
 ]);
 
+export const genderEnum = z.enum(["MALE", "FEMALE"]);
+
 export const measurementsSchema = z.object({
   bust: z.number().positive(),
   waist: z.number().positive(),
@@ -21,6 +23,7 @@ export const createSubmissionSchema = z.object({
   email: z.string().email(),
   phone: z.string().min(5),
   address: z.string().min(1),
+  gender: genderEnum,
   occasion: occasionEnum,
   fabricImageUrl: z.string().min(1),
   fabricLabel: z.string().min(1),

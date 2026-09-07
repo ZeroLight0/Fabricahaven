@@ -6,7 +6,7 @@ import { suggestStyles } from "@/lib/styleSuggestion";
 import { GeminiQuotaExhaustedError } from "@/lib/gemini";
 import { calculateYardage } from "@/lib/yardage";
 import { calculatePrice } from "@/lib/pricing";
-import { Occasion, Prisma } from "@prisma/client";
+import { Gender, Occasion, Prisma } from "@prisma/client";
 
 // gemini-3.6-flash spends a mandatory, non-disableable token budget on
 // internal reasoning before answering (measured up to ~40s on a real
@@ -21,13 +21,18 @@ export async function POST(req: NextRequest) {
   }
   const input = parsed.data;
 
+  // Gender selection filters the candidate pool itself (not just a prompt
+  // hint) — the AI can only pick from styles tagged for the chosen gender.
   const templates = await prisma.styleTemplate.findMany({
-    where: { active: true },
+    where: { active: true, gender: input.gender as Gender },
     select: { id: true, name: true, garment: true, occasions: true, imageUrl: true },
   });
 
-  if (templates.length === 0) {
-    return NextResponse.json({ error: "No style templates available" }, { status: 500 });
+  if (templates.length < 5) {
+    return NextResponse.json(
+      { error: "Not enough style templates available for this selection" },
+      { status: 500 }
+    );
   }
 
   let picks;
@@ -68,6 +73,7 @@ export async function POST(req: NextRequest) {
       email: input.email,
       phone: input.phone,
       address: input.address,
+      gender: input.gender as Gender,
       occasion: input.occasion as Occasion,
       fabricImageUrl: input.fabricImageUrl,
       fabricLabel: input.fabricLabel,

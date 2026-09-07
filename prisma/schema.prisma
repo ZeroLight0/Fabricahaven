@@ -73,6 +73,7 @@ model Submission {
   email          String
   phone          String
   address        String
+  gender         Gender?
   occasion       Occasion
   fabricImageUrl String
   fabricLabel    String?

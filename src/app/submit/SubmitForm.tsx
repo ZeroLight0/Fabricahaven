@@ -3,15 +3,17 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import FabricUploadStep from "@/components/FabricUploadStep";
+import GenderStep from "@/components/GenderStep";
 import OccasionStep from "@/components/OccasionStep";
 import MeasurementsStep from "@/components/MeasurementsStep";
 import PriceStep from "@/components/PriceStep";
 import ContactDetailsStep, { type ContactDetails } from "@/components/ContactDetailsStep";
 import AnimatedLoadingText from "@/components/AnimatedLoadingText";
-import type { FabricSuggestion, MeasurementsInput, OccasionValue } from "@/lib/types";
+import type { FabricSuggestion, GenderValue, MeasurementsInput, OccasionValue } from "@/lib/types";
 
 const STEP_TITLES = [
   "Fabric photo",
+  "Gender",
   "Occasion",
   "Measurements",
   "Fabric pricing",
@@ -28,6 +30,8 @@ export default function SubmitForm() {
   const [fabricPreviewUrl, setFabricPreviewUrl] = useState<string | null>(null);
   const [fabricLabel, setFabricLabel] = useState("");
   const [, setFabricSuggestion] = useState<FabricSuggestion | null>(null);
+
+  const [gender, setGender] = useState<GenderValue | null>(null);
 
   const [occasion, setOccasion] = useState<OccasionValue | null>(null);
 
@@ -53,12 +57,14 @@ export default function SubmitForm() {
       case 0:
         return Boolean(fabricImageUrl && fabricLabel.trim());
       case 1:
-        return Boolean(occasion);
+        return Boolean(gender);
       case 2:
-        return Object.values(measurements).every((v) => v.trim() !== "" && Number(v) > 0);
+        return Boolean(occasion);
       case 3:
-        return Number(pricePerYard) > 0;
+        return Object.values(measurements).every((v) => v.trim() !== "" && Number(v) > 0);
       case 4:
+        return Number(pricePerYard) > 0;
+      case 5:
         return (
           contact.name.trim() !== "" &&
           contact.email.trim() !== "" &&
@@ -82,6 +88,7 @@ export default function SubmitForm() {
           email: contact.email,
           phone: contact.phone,
           address: contact.address,
+          gender,
           occasion,
           fabricImageUrl,
           fabricLabel,
@@ -145,10 +152,11 @@ export default function SubmitForm() {
               onLabelChange={setFabricLabel}
             />
           )}
-          {step === 1 && <OccasionStep value={occasion} onChange={setOccasion} />}
-          {step === 2 && <MeasurementsStep value={measurements} onChange={setMeasurements} />}
-          {step === 3 && <PriceStep value={pricePerYard} onChange={setPricePerYard} />}
-          {step === 4 && <ContactDetailsStep value={contact} onChange={setContact} />}
+          {step === 1 && <GenderStep value={gender} onChange={setGender} />}
+          {step === 2 && <OccasionStep value={occasion} onChange={setOccasion} />}
+          {step === 3 && <MeasurementsStep value={measurements} onChange={setMeasurements} />}
+          {step === 4 && <PriceStep value={pricePerYard} onChange={setPricePerYard} />}
+          {step === 5 && <ContactDetailsStep value={contact} onChange={setContact} />}
         </div>
 
         {error && (
