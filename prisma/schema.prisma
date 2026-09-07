@@ -14,6 +14,11 @@ enum Occasion {
   PARTY
 }
 
+enum Gender {
+  MALE
+  FEMALE
+}
+
 enum GarmentCategory {
   DRESS
   TOP
@@ -39,6 +44,7 @@ model StyleTemplate {
   name         String
   imageUrl     String // placeholder until Cloudinary links are added
   garment      GarmentCategory
+  gender       Gender
   occasions    Occasion[]
   yardageNotes String?
   active       Boolean         @default(true)
